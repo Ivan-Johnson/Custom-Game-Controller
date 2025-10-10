@@ -28,14 +28,14 @@ impl MyParsedArgs {
 #[argh(subcommand)]
 enum SubcommandCLI {
 	StartDaemon(StartDaemonConfig),
-	ReadDaemon(ReadConfig),
+	Read(ReadConfig),
 }
 
 impl SubcommandCLI {
 	pub fn main(self) -> ! {
 		match self {
 			SubcommandCLI::StartDaemon(conf) => conf.main(),
-			SubcommandCLI::ReadDaemon(conf) => conf.main(),
+			SubcommandCLI::Read(conf) => conf.main(),
 		}
 	}
 }
