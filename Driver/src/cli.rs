@@ -29,6 +29,7 @@ impl MyParsedArgs {
 enum SubcommandCLI {
 	StartDaemon(StartDaemonConfig),
 	Read(ReadConfig),
+	Scratch(ScratchConfig),
 }
 
 impl SubcommandCLI {
@@ -36,6 +37,7 @@ impl SubcommandCLI {
 		match self {
 			SubcommandCLI::StartDaemon(conf) => conf.main(),
 			SubcommandCLI::Read(conf) => conf.main(),
+			SubcommandCLI::Scratch(conf) => conf.main(),
 		}
 	}
 }
@@ -63,6 +65,22 @@ struct ReadConfig {
 impl ReadConfig {
 	pub fn main(self) -> ! {
 		read_main(&self.node)
+	}
+}
+
+/// A placeholder subcommand for testing code changes locally.
+///
+/// For example, the motivating usecase was to run some example code from the
+/// `evdev` crate: I pasted that example code into `ScratchConfig::main`, tested
+/// if it worked, then reverted it back to the original code when I was done.
+#[derive(FromArgs)]
+#[argh(subcommand, name = "scratch")]
+struct ScratchConfig {}
+
+impl ScratchConfig {
+	pub fn main(self) -> ! {
+		println!("Hello, World!");
+		std::process::exit(0)
 	}
 }
 
