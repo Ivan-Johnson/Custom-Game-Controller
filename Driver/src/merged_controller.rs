@@ -1,5 +1,6 @@
 use evdev::uinput::VirtualDevice;
 use evdev::Device;
+use evdev::UinputAbsSetup;
 
 use crate::constants::get_input_id_merged_controller;
 
@@ -11,7 +12,6 @@ use crate::constants::get_input_id_merged_controller;
 pub struct MergedController {
 	input_device: Device,
 	virtual_device: VirtualDevice,
-	// device: Device,
 }
 
 impl MergedController {
@@ -19,12 +19,23 @@ impl MergedController {
 		assert!(input_controllers.len() == 1);
 		let input_device = Device::open(input_controllers[0]).unwrap();
 
-		let mut virtual_device = VirtualDevice::builder()
+		let mut builder = VirtualDevice::builder()
 			.unwrap()
 			.name("VirtualController")
 			.input_id(get_input_id_merged_controller())
-			.build()
+			.with_properties(input_device.properties())
+			.unwrap()
+			.with_keys(input_device.supported_keys().unwrap())
 			.unwrap();
+
+		for (code, info) in input_device.get_absinfo().unwrap() {
+			builder = builder
+				.with_absolute_axis(&UinputAbsSetup::new(code, info))
+				.unwrap();
+		}
+
+		let mut virtual_device = builder.build().unwrap();
+
 		println!("Virtual device = {virtual_device:?}");
 		let syspath = virtual_device.get_syspath().unwrap();
 		println!("syspath = {syspath:?}");
@@ -35,19 +46,10 @@ impl MergedController {
 		let node = devnodes.pop().unwrap().unwrap();
 		println!("node = {node:?}");
 
-		// TODO: ~~setup udev rules so that this doesn't crash~~
-		// Now that I'm in the input group, this should no longer crash?
-		// let device = evdev::Device::open(node).unwrap();
 		Self {
 			input_device,
 			virtual_device,
-			// device,
 		}
-	}
-
-	pub fn get_device(&mut self) -> &mut Device {
-		todo!();
-		// &mut self.device
 	}
 
 	pub fn poll(&mut self) {
