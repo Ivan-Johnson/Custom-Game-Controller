@@ -7,6 +7,7 @@ pub fn summary_to_text(summary: EventSummary) -> String {
 			format!("key {code:?} {}", if value == 0 { "up" } else { "down" })
 		}
 		EventSummary::AbsoluteAxis(_, axis, value) => format!("axis {axis:?} {value:?}"),
+		EventSummary::ForceFeedback(ff, _, _) => format!("Force Feedback - {ff:?}"),
 		_ => todo!(),
 	}
 }

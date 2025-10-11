@@ -88,6 +88,7 @@ impl MergedController {
 					EventSummary::Key(_, _, _) => true,
 					EventSummary::Synchronization(_, _, _) => false, /* unnecessary; https://docs.rs/evdev/latest/evdev/uinput/struct.VirtualDevice.html#method.emit*/
 					EventSummary::AbsoluteAxis(_, _, _) => true,
+					EventSummary::ForceFeedback(_, _, _) => false,
 					summary => panic!("Unsupported event summary: {summary:?}"),
 				};
 
