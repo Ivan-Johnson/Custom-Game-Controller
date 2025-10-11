@@ -1,3 +1,4 @@
+use crate::my_event_summary::summary_to_text;
 use evdev::Device;
 
 pub fn read_main(node: &str) -> ! {
@@ -5,12 +6,8 @@ pub fn read_main(node: &str) -> ! {
 
 	loop {
 		for event in device.fetch_events().unwrap() {
-			let event = event.destructure();
-
-			match event {
-				evdev::EventSummary::Synchronization(_, _, _) => println!("\nSYNC - {event:?}\n"),
-				_ => println!("Got {event:?}"),
-			}
+			let summary = event.destructure();
+			println!("{}", summary_to_text(summary));
 		}
 	}
 }

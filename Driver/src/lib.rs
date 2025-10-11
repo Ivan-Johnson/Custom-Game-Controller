@@ -4,6 +4,7 @@
 pub mod cli;
 mod constants;
 mod merged_controller;
+mod my_event_summary;
 mod read;
 
 pub use merged_controller::MergedController;

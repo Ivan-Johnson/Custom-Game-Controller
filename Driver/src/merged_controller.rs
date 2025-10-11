@@ -1,3 +1,4 @@
+use crate::my_event_summary::summary_to_text;
 use evdev::uinput::VirtualDevice;
 use evdev::AbsoluteAxisCode;
 use evdev::Device;
@@ -69,19 +70,22 @@ impl MergedController {
 	pub fn poll(&mut self) {
 		for device in &mut self.input_device {
 			for event in device.fetch_events().unwrap() {
-				let should_forward = match event.destructure() {
+				let summary = event.destructure();
+				let should_forward = match summary {
 					EventSummary::Key(_, _, _) => true,
 					EventSummary::Synchronization(_, _, _) => true,
 					EventSummary::AbsoluteAxis(_, axis, _) => axis == AbsoluteAxisCode::ABS_Z,
 					summary => panic!("Unsupported event summary: {summary:?}"),
 				};
 
-				if should_forward {
+				let result = if should_forward {
 					self.virtual_device.emit(&[event]).unwrap();
-					println!("Forwarding {event:?}");
+					"Forward"
 				} else {
-					println!("IGNORING {event:?}");
-				}
+					"IGNORE"
+				};
+				let text = summary_to_text(summary);
+				println!("{result:10} - {text}");
 			}
 		}
 	}
