@@ -1,6 +1,7 @@
+use std::io::ErrorKind;
+
 use crate::my_event_summary::summary_to_text;
 use evdev::uinput::VirtualDevice;
-use evdev::AbsoluteAxisCode;
 use evdev::Device;
 use evdev::EventSummary;
 use evdev::UinputAbsSetup;
@@ -24,6 +25,10 @@ impl MergedController {
 			.iter()
 			.map(|path| Device::open(path).unwrap())
 			.collect();
+
+		for device in &input_device {
+			device.set_nonblocking(true).unwrap();
+		}
 
 		let primary = &input_device[0];
 		let properties = primary.properties();
@@ -69,12 +74,20 @@ impl MergedController {
 
 	pub fn poll(&mut self) {
 		for device in &mut self.input_device {
-			for event in device.fetch_events().unwrap() {
+			let events = device.fetch_events();
+			if let Err(err) = events {
+				assert_eq!(err.kind(), ErrorKind::WouldBlock);
+				continue;
+			}
+			// TODO: finish processing inner loop before calling emit. Send all events at once? (assuming we don't get any `sync`s in the middle...)
+
+			// TODO: add fance logic. if button a is pressed on controller 1 then 2, insert fake release event.
+			for event in events.unwrap() {
 				let summary = event.destructure();
 				let should_forward = match summary {
 					EventSummary::Key(_, _, _) => true,
-					EventSummary::Synchronization(_, _, _) => true,
-					EventSummary::AbsoluteAxis(_, axis, _) => axis == AbsoluteAxisCode::ABS_Z,
+					EventSummary::Synchronization(_, _, _) => false, /* unnecessary; https://docs.rs/evdev/latest/evdev/uinput/struct.VirtualDevice.html#method.emit*/
+					EventSummary::AbsoluteAxis(_, _, _) => true,
 					summary => panic!("Unsupported event summary: {summary:?}"),
 				};
 
