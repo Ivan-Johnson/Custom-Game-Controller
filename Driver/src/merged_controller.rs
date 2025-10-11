@@ -81,7 +81,7 @@ impl MergedController {
 			}
 			// TODO: finish processing inner loop before calling emit. Send all events at once? (assuming we don't get any `sync`s in the middle...)
 
-			// TODO: add fance logic. if button a is pressed on controller 1 then 2, insert fake release event.
+			// TODO: add fancy logic. if button a is pressed on controller 1 then 2, insert fake release event.
 			for event in events.unwrap() {
 				let summary = event.destructure();
 				let should_forward = match summary {
