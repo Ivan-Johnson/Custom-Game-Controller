@@ -21,7 +21,7 @@ impl MergedController {
 
 		let mut builder = VirtualDevice::builder()
 			.unwrap()
-			.name("VirtualController")
+			.name("Two One Handed Controllers")
 			.input_id(get_input_id_merged_controller())
 			.with_properties(input_device.properties())
 			.unwrap()
@@ -55,9 +55,9 @@ impl MergedController {
 	pub fn poll(&mut self) {
 		for event in self.input_device.fetch_events().unwrap() {
 			let summary = event.destructure();
-			println!("Mirroring - {summary:?}");
 
 			self.virtual_device.emit(&[event]).unwrap();
+			println!("Mirrored - {summary:?}");
 		}
 	}
 
