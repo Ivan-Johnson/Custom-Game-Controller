@@ -5,11 +5,13 @@ use crate::MergedController;
 
 const MICROSOFT_XBOX_ADAPTIVE_JOYSTICK_A: &str =
 	"/dev/input/by-id/usb-Microsoft_Xbox_Adaptive_Joystick_0Y3DCGX24243Q8-event-joystick";
-#[allow(dead_code)]
 const MICROSOFT_XBOX_ADAPTIVE_JOYSTICK_B: &str =
 	"/dev/input/by-id/usb-Microsoft_Xbox_Adaptive_Joystick_0Y3DD3R24223Q8-event-joystick";
 
-const CONTROLLERS: [&str; 1] = [MICROSOFT_XBOX_ADAPTIVE_JOYSTICK_A];
+const CONTROLLERS: [&str; 2] = [
+	MICROSOFT_XBOX_ADAPTIVE_JOYSTICK_A,
+	MICROSOFT_XBOX_ADAPTIVE_JOYSTICK_B,
+];
 
 /// A driver for virtual controllers.
 #[derive(FromArgs)]

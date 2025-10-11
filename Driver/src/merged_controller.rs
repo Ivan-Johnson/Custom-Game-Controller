@@ -1,5 +1,7 @@
 use evdev::uinput::VirtualDevice;
+use evdev::AbsoluteAxisCode;
 use evdev::Device;
+use evdev::EventSummary;
 use evdev::UinputAbsSetup;
 
 use crate::constants::get_input_id_merged_controller;
@@ -10,25 +12,37 @@ use crate::constants::get_input_id_merged_controller;
 /// create a single virtual controller. Inputs from any of the physical
 /// controllers are forwarded to the virtual controller.
 pub struct MergedController {
-	input_device: Device,
+	input_device: Vec<Device>,
 	virtual_device: VirtualDevice,
 }
 
 impl MergedController {
 	pub fn new(input_controllers: &[&str]) -> Self {
-		assert!(input_controllers.len() == 1);
-		let input_device = Device::open(input_controllers[0]).unwrap();
+		assert!(!input_controllers.is_empty());
+		let input_device: Vec<Device> = input_controllers
+			.iter()
+			.map(|path| Device::open(path).unwrap())
+			.collect();
+
+		let primary = &input_device[0];
+		let properties = primary.properties();
+		println!("PROPERTIES: {properties:?}");
+		let keys = primary.supported_keys().unwrap();
 
 		let mut builder = VirtualDevice::builder()
 			.unwrap()
 			.name("Two One Handed Controllers")
 			.input_id(get_input_id_merged_controller())
-			.with_properties(input_device.properties())
+			.with_properties(properties)
 			.unwrap()
-			.with_keys(input_device.supported_keys().unwrap())
+			.with_keys(keys)
 			.unwrap();
 
-		for (code, info) in input_device.get_absinfo().unwrap() {
+		// for device in input_device[1..] {
+		// 	// TODO: assert device.properties() == properties, etc
+		// }
+
+		for (code, info) in primary.get_absinfo().unwrap() {
 			builder = builder
 				.with_absolute_axis(&UinputAbsSetup::new(code, info))
 				.unwrap();
@@ -53,11 +67,22 @@ impl MergedController {
 	}
 
 	pub fn poll(&mut self) {
-		for event in self.input_device.fetch_events().unwrap() {
-			let summary = event.destructure();
+		for device in &mut self.input_device {
+			for event in device.fetch_events().unwrap() {
+				let should_forward = match event.destructure() {
+					EventSummary::Key(_, _, _) => true,
+					EventSummary::Synchronization(_, _, _) => true,
+					EventSummary::AbsoluteAxis(_, axis, _) => axis == AbsoluteAxisCode::ABS_Z,
+					summary => panic!("Unsupported event summary: {summary:?}"),
+				};
 
-			self.virtual_device.emit(&[event]).unwrap();
-			println!("Mirrored - {summary:?}");
+				if should_forward {
+					self.virtual_device.emit(&[event]).unwrap();
+					println!("Forwarding {event:?}");
+				} else {
+					println!("IGNORING {event:?}");
+				}
+			}
 		}
 	}
 
