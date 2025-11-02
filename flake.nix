@@ -36,7 +36,8 @@
 				];
 			};
 
-			packages.${pkgs.system}.default = driver;
+			# temporarily changed to GNU's Hello World package
+			packages.${pkgs.system}.default = pkgs.hello;
 
 			nixos_options =
 				{
