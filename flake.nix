@@ -27,14 +27,22 @@
 		{
 			devShells.${pkgs.system}.default = pkgs.mkShell {
 				buildInputs = [
+					pkgs.arduino-cli
 					pkgs.arduino-ide
 					pkgs.blender
+					pkgs.gdb
+					pkgs.gcc-arm-embedded # for gdb et al
 					pkgs.cargo
 					pkgs.cargo-flamegraph
 					pkgs.clippy
 					pkgs.lldb
 					pkgs.rustc
 					pkgs.rustfmt
+
+					pkgs.rustup
+					pkgs.probe-rs-tools
+					pkgs.minicom
+					pkgs.cargo-binutils
 				];
 			};
 
