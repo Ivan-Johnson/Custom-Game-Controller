@@ -27,6 +27,7 @@
 		{
 			devShells.${pkgs.system}.default = pkgs.mkShell {
 				buildInputs = [
+					pkgs.arduino-ide
 					pkgs.blender
 					pkgs.cargo
 					pkgs.cargo-flamegraph
