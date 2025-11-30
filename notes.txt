@@ -1,4 +1,6 @@
 
+
+
 * Hardware:
 
   Nano matter:
@@ -15,3 +17,19 @@
 
 
   https://docs.silabs.com/simplicity-studio-5-users-guide/5.9.1/ss-5-users-guide-vscode-ide/
+
+
+* tools:
+
+
+  probe-rs
+  https://probe.rs/
+
+
+
+* Rust embedded book:
+  https://docs.rust-embedded.org/book
+
+* embedonomicon
+
+  https://docs.rust-embedded.org/embedonomicon/index.html
