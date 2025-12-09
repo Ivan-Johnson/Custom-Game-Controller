@@ -1,0 +1,12 @@
+Boards,MCU,USB,Bluetooth,Wifi,Flash,RAM,URL
+Nano,ATmega328,Mini B,No,No,32K,2K,
+Nano 33 BLE,nRF52840,Micro,Yes,No,1MB,256K,
+Nano 33 BLE Rev2,nRF52840,Micro,Yes,No,1MB,256K,
+Nano 33 BLE Sense,nRF52840,Micro,Yes,No,1MB,256K,
+Nano 33 BLE Sense Rev2,nRF52840,Micro,Yes,No,1MB,256K,
+Nano 33 IoT,SAMD21 Cortex®-M0+ 32bit low power ARM MCU,Micro,Yes,Yes,1MB,256K,https://docs.arduino.cc/hardware/nano-33-iot/#tech-specs
+Nano ESP32,u-blox® NORA-W106-10B (ESP32-S3),C,BLE,Yes,16B,512K,https://docs.arduino.cc/hardware/nano-esp32/#tech-specs
+Nano Every,ATMega4809,Micro,No,No,48K,6K,https://docs.arduino.cc/hardware/nano-every/#tech-specs
+Nano Matter,MGM240SD22VNA 32-bit Arm® Cortex®-M33 with DSP instruction and FPU,C,BLE,No?,1536K,256K,https://docs.arduino.cc/hardware/nano-matter/#tech-specs
+Nano R4,Renesas RA4M1 (Arm® Cortex®-M4),C,No,No,256K,32K,https://docs.arduino.cc/hardware/nano-r4/#tech-specs
+Nano RP2040 Connect,Raspberry Pi RP2040,Micro,BLE,Yes,16M,520K,https://docs.arduino.cc/hardware/nano-rp2040-connect/#tech-specs
