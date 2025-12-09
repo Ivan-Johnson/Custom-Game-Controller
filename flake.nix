@@ -1,7 +1,7 @@
 {
 	description = "driver";
 
-	inputs.nixpkgs.url = "nixpkgs/nixos-25.05-small";
+	inputs.nixpkgs.url = "nixpkgs/nixos-25.11-small";
 
 	outputs =
 		{ self, nixpkgs }:
