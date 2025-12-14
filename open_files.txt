@@ -1,3 +1,4 @@
 open_files.txt
 TODO.txt
 notes.txt
+flake.nix
