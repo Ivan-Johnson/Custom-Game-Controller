@@ -1,5 +1,6 @@
 [general]
-board = "nano-new"
+# board = "nano-new"
+board = "micro"
 # After flashing, open the serial console at 57600 baud.
 open-console = true
 serial-baudrate = 57600
