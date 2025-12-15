@@ -2,6 +2,11 @@
 
   https://store.arduino.cc/collections/nano-family/products/arduino-nano
 
+  * Microcontroller: ATmega328
+  * Architecture: AVR
+  * Flash Memory: 32 KB of which 2 KB used by bootloader
+  * SRAM: 2K
+
 * Rust embedded book:
   https://docs.rust-embedded.org/book
 
