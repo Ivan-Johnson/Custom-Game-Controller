@@ -50,7 +50,7 @@
 						sha256 = "sha256-z8J/GH7znPPg9kKvPirKcBeXqHikj1M7KB+anwsDx0M=";
 					})
 				];
-				RAVEDUDE_PORT = "/dev/ttyACM0";
+				RAVEDUDE_PORT = "/dev/ttyACM1";
 			};
 
 			# temporarily changed to GNU's Hello World package
