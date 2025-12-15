@@ -1,10 +1,20 @@
 {
 	description = "driver";
 
-	inputs.nixpkgs.url = "nixpkgs/nixos-25.11-small";
+	inputs = {
+		nixpkgs.url = "nixpkgs/nixos-25.11-small";
+		fenix = {
+			url = "github:nix-community/fenix";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
+	};
 
 	outputs =
-		{ self, nixpkgs }:
+		{
+			self,
+			nixpkgs,
+			fenix,
+		}:
 		let
 			pkgs = import nixpkgs { system = "x86_64-linux"; };
 			rustPlatform = pkgs.rustPlatform;
@@ -25,25 +35,22 @@
 			};
 		in
 		{
-			devShells.${pkgs.system}.default = pkgs.mkShell {
+			devShells.x86_64-linux.default = pkgs.mkShell {
 				buildInputs = [
 					pkgs.arduino-cli
 					pkgs.arduino-ide
+					pkgs.avrdude
 					pkgs.blender
-					pkgs.gdb
-					pkgs.gcc-arm-embedded # for gdb et al
-					pkgs.cargo
-					pkgs.cargo-flamegraph
-					pkgs.clippy
-					pkgs.lldb
-					pkgs.rustc
-					pkgs.rustfmt
-
-					pkgs.rustup
-					pkgs.probe-rs-tools
+					pkgs.pkgsCross.avr.buildPackages.gcc
+					(pkgs.python3.withPackages (python-pkgs: with python-pkgs; [ pyserial ]))
 					pkgs.minicom
-					pkgs.cargo-binutils
+					pkgs.ravedude
+					(fenix.packages.x86_64-linux.fromToolchainFile {
+						file = ./rust-toolchain.toml;
+						sha256 = "sha256-z8J/GH7znPPg9kKvPirKcBeXqHikj1M7KB+anwsDx0M=";
+					})
 				];
+				RAVEDUDE_PORT = "/dev/ttyUSB0";
 			};
 
 			# temporarily changed to GNU's Hello World package

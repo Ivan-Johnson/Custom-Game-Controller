@@ -1,6 +1,7 @@
 cargo generate --git https://github.com/Rahix/avr-hal-template.git
 rustup component add rust-src # YUCK!
 
+* https://github.com/Rahix/avr-hal/tree/main/examples
 
 * https://github.com/arnemileswinter/rust-atmega2560-cross-compile-nix-blinking-led/tree/main
 
