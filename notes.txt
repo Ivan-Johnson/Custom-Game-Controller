@@ -1,3 +1,9 @@
+* TODO TODO TODO:
+
+  Did anyone respond to my github post?
+
+  https://github.com/Rahix/avr-hal/discussions/691
+
 * Hardware:
 
   https://store.arduino.cc/collections/nano-family/products/arduino-nano
