@@ -41,6 +41,7 @@
 					pkgs.arduino-ide
 					pkgs.avrdude
 					pkgs.blender
+					pkgs.cargo-generate
 					pkgs.pkgsCross.avr.buildPackages.gcc
 					(pkgs.python3.withPackages (python-pkgs: with python-pkgs; [ pyserial ]))
 					pkgs.minicom
