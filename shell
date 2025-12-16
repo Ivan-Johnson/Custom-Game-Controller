@@ -25,4 +25,4 @@ cd "$(dirname "$0")"
 # MAIN LOGIC #
 ##############
 
-python3 -m serial.tools.miniterm /dev/ttyACM1
+python3 -m serial.tools.miniterm "$RAVEDUDE_PORT"
