@@ -3,8 +3,8 @@
 #![deny(clippy::large_stack_frames)]
 pub mod cli;
 mod constants;
-mod merged_controller;
 mod my_event_summary;
 mod read;
+mod virtual_controller;
 
-pub use merged_controller::MergedController;
+pub use virtual_controller::MergedController;

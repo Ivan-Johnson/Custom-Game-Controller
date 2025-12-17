@@ -34,6 +34,7 @@ impl MergedController {
 		let properties = primary.properties();
 		println!("PROPERTIES: {properties:?}");
 		let keys = primary.supported_keys().unwrap();
+		println!("KEYS: {keys:?}");
 
 		let mut builder = VirtualDevice::builder()
 			.unwrap()
@@ -49,6 +50,8 @@ impl MergedController {
 		// }
 
 		for (code, info) in primary.get_absinfo().unwrap() {
+			println!("AXIS: {code:?}, {info:?}");
+
 			builder = builder
 				.with_absolute_axis(&UinputAbsSetup::new(code, info))
 				.unwrap();
