@@ -1,0 +1,5 @@
+* TODO TODO TODO:
+
+  After v0.1, work on getting Arduino Micro working
+
+  https://github.com/Rahix/avr-hal/discussions/691
