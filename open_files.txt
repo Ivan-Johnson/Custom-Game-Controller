@@ -1,4 +1,6 @@
-open_files.txt
 TODO.txt
 notes.txt
+
+Firmware/src/main.rs
 flake.nix
+open_files.txt
