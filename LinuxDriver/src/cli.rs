@@ -44,7 +44,23 @@ impl SubcommandCLI {
 	}
 }
 
-/// Start a new virtual controller that mirrors the given controller.
+/// "read" data from the given event file
+///
+/// Basically, this just prints any events from the given device.
+///
+/// Example output:
+///
+/// ```
+/// axis ABS_X 829
+/// axis ABS_Y -4540
+/// sync
+/// axis ABS_Y -3613
+/// sync
+/// key BTN_EAST down
+/// sync
+/// key BTN_EAST up
+/// sync
+/// ```
 #[derive(FromArgs)]
 #[argh(subcommand, name = "daemon")]
 struct StartDaemonConfig {}
