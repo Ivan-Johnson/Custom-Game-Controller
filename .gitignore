@@ -1,1 +1,7 @@
 /result
+
+# Even though we don't have a root `Cargo.toml` file,
+# the `rust-analyzer` artifacts still get placed here -_-
+#
+# I *think* that my crude emacs config is to blame.
+/target
