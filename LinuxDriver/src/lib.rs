@@ -7,4 +7,4 @@ mod my_event_summary;
 mod read;
 mod virtual_controller;
 
-pub use virtual_controller::MergedController;
+pub use virtual_controller::VirtualController;

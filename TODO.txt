@@ -1,5 +1,14 @@
-* TODO TODO TODO:
+* v0.1:
 
-  After v0.1, work on getting Arduino Micro working
+  `LinuxDriver/src/virtual_controller.rs`: instead of outputting arbitrary data,
+  read from $RAVEDUDE_PORT. Map chars to key events. e.g. L->press left,
+  l->release left.
+
+  In firmware, instead of outputting arbitrary chars, output based on push
+  buttons. e.g. push button down -> L, push button up -> l.
+
+* v0.2
+
+  Work on getting Arduino Micro working
 
   https://github.com/Rahix/avr-hal/discussions/691

@@ -1,63 +1,58 @@
 use std::io::ErrorKind;
 
+use crate::constants::get_input_id_virtual_controller;
 use crate::my_event_summary::summary_to_text;
 use evdev::uinput::VirtualDevice;
+use evdev::AttributeSet;
+use evdev::AttributeSetRef;
 use evdev::Device;
 use evdev::EventSummary;
+use evdev::InputEvent;
+use evdev::KeyCode;
+use evdev::KeyEvent;
 use evdev::UinputAbsSetup;
-
-use crate::constants::get_input_id_merged_controller;
+use std::time::Duration;
 
 /// This is a HelloWorld virtual controller.
 ///
 /// It takes a list of identical physical controllers as input, and uses it to
 /// create a single virtual controller. Inputs from any of the physical
 /// controllers are forwarded to the virtual controller.
-pub struct MergedController {
-	input_device: Vec<Device>,
+pub struct VirtualController {
 	virtual_device: VirtualDevice,
 }
 
-impl MergedController {
-	pub fn new(input_controllers: &[&str]) -> Self {
-		assert!(!input_controllers.is_empty());
-		let input_device: Vec<Device> = input_controllers
-			.iter()
-			.map(|path| Device::open(path).unwrap())
-			.collect();
+impl VirtualController {
+	pub fn new() -> Self {
+		// For reference, here is the config info from one of my Microsoft XBox Adaptive Joysticks.
+		//
+		// PROPERTIES: {}
+		// KEYS: {BTN_SOUTH, BTN_EAST, BTN_NORTH, BTN_WEST, BTN_TL, BTN_TR, BTN_SELECT, BTN_START, BTN_MODE, BTN_THUMBL, BTN_THUMBR}
+		// ABSINFO: ABS_X, AbsInfo(input_absinfo { value: -64, minimum: -32768, maximum: 32767, fuzz: 16, flat: 128, resolution: 0 })
+		// ABSINFO: ABS_Y, AbsInfo(input_absinfo { value: 1317, minimum: -32768, maximum: 32767, fuzz: 16, flat: 128, resolution: 0 })
+		// ABSINFO: ABS_Z, AbsInfo(input_absinfo { value: 0, minimum: 0, maximum: 1023, fuzz: 0, flat: 0, resolution: 0 })
+		// ABSINFO: ABS_RX, AbsInfo(input_absinfo { value: 0, minimum: -32768, maximum: 32767, fuzz: 16, flat: 128, resolution: 0 })
+		// ABSINFO: ABS_RY, AbsInfo(input_absinfo { value: 0, minimum: -32768, maximum: 32767, fuzz: 16, flat: 128, resolution: 0 })
+		// ABSINFO: ABS_RZ, AbsInfo(input_absinfo { value: 0, minimum: 0, maximum: 1023, fuzz: 0, flat: 0, resolution: 0 })
+		// ABSINFO: ABS_HAT0X, AbsInfo(input_absinfo { value: 0, minimum: -1, maximum: 1, fuzz: 0, flat: 0, resolution: 0 })
+		// ABSINFO: ABS_HAT0Y, AbsInfo(input_absinfo { value: 0, minimum: -1, maximum: 1, fuzz: 0, flat: 0, resolution: 0 })
 
-		for device in &input_device {
-			device.set_nonblocking(true).unwrap();
-		}
+		let keys = [
+			KeyCode::BTN_SOUTH,
+			KeyCode::BTN_EAST,
+			KeyCode::BTN_NORTH,
+			KeyCode::BTN_WEST,
+		];
+		let keys = AttributeSet::from_iter(keys);
 
-		let primary = &input_device[0];
-		let properties = primary.properties();
-		println!("PROPERTIES: {properties:?}");
-		let keys = primary.supported_keys().unwrap();
-		println!("KEYS: {keys:?}");
-
-		let mut builder = VirtualDevice::builder()
+		let mut virtual_device = VirtualDevice::builder()
 			.unwrap()
-			.name("Two One Handed Controllers")
-			.input_id(get_input_id_merged_controller())
-			.with_properties(properties)
+			.name("Hello World")
+			.input_id(get_input_id_virtual_controller())
+			.with_keys(&keys)
 			.unwrap()
-			.with_keys(keys)
+			.build()
 			.unwrap();
-
-		// for device in input_device[1..] {
-		// 	// TODO: assert device.properties() == properties, etc
-		// }
-
-		for (code, info) in primary.get_absinfo().unwrap() {
-			println!("AXIS: {code:?}, {info:?}");
-
-			builder = builder
-				.with_absolute_axis(&UinputAbsSetup::new(code, info))
-				.unwrap();
-		}
-
-		let mut virtual_device = builder.build().unwrap();
 
 		println!("Virtual device = {virtual_device:?}");
 		let syspath = virtual_device.get_syspath().unwrap();
@@ -69,47 +64,24 @@ impl MergedController {
 		let node = devnodes.pop().unwrap().unwrap();
 		println!("node = {node:?}");
 
-		Self {
-			input_device,
-			virtual_device,
-		}
+		Self { virtual_device }
 	}
 
 	pub fn poll(&mut self) {
-		for device in &mut self.input_device {
-			let events = device.fetch_events();
-			if let Err(err) = events {
-				assert_eq!(err.kind(), ErrorKind::WouldBlock);
-				continue;
-			}
-			// TODO: finish processing inner loop before calling emit. Send all events at once? (assuming we don't get any `sync`s in the middle...)
-
-			// TODO: add fancy logic. if button a is pressed on controller 1 then 2, insert fake release event.
-			for event in events.unwrap() {
-				let summary = event.destructure();
-				let should_forward = match summary {
-					EventSummary::Key(_, _, _) => true,
-					EventSummary::Synchronization(_, _, _) => false, /* unnecessary; https://docs.rs/evdev/latest/evdev/uinput/struct.VirtualDevice.html#method.emit*/
-					EventSummary::AbsoluteAxis(_, _, _) => true,
-					EventSummary::ForceFeedback(_, _, _) => false,
-					summary => panic!("Unsupported event summary: {summary:?}"),
-				};
-
-				let result = if should_forward {
-					self.virtual_device.emit(&[event]).unwrap();
-					"Forward"
-				} else {
-					"IGNORE"
-				};
-				let text = summary_to_text(summary);
-				println!("{result:10} - {text}");
-			}
-		}
+		todo!();
 	}
 
 	pub fn poll_loop(&mut self) -> ! {
 		loop {
-			self.poll();
+			std::thread::sleep(Duration::from_millis(1_000));
+
+			let event: [InputEvent; 1] = [InputEvent::from(KeyEvent::new(KeyCode::BTN_SOUTH, 0))];
+			self.virtual_device.emit(&event).unwrap();
+
+			std::thread::sleep(Duration::from_millis(1_000));
+
+			let event: [InputEvent; 1] = [InputEvent::from(KeyEvent::new(KeyCode::BTN_SOUTH, 1))];
+			self.virtual_device.emit(&event).unwrap();
 		}
 	}
 }

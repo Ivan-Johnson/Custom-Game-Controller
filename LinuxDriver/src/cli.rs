@@ -1,17 +1,7 @@
 use argh::FromArgs;
 
 use crate::read::read_main;
-use crate::MergedController;
-
-const MICROSOFT_XBOX_ADAPTIVE_JOYSTICK_A: &str =
-	"/dev/input/by-id/usb-Microsoft_Xbox_Adaptive_Joystick_0Y3DCGX24243Q8-event-joystick";
-const MICROSOFT_XBOX_ADAPTIVE_JOYSTICK_B: &str =
-	"/dev/input/by-id/usb-Microsoft_Xbox_Adaptive_Joystick_0Y3DD3R24223Q8-event-joystick";
-
-const CONTROLLERS: [&str; 2] = [
-	MICROSOFT_XBOX_ADAPTIVE_JOYSTICK_A,
-	MICROSOFT_XBOX_ADAPTIVE_JOYSTICK_B,
-];
+use crate::VirtualController;
 
 /// A driver for virtual controllers.
 #[derive(FromArgs)]
@@ -67,7 +57,7 @@ struct StartDaemonConfig {}
 
 impl StartDaemonConfig {
 	pub fn main(self) -> ! {
-		let mut merged = MergedController::new(&CONTROLLERS);
+		let mut merged = VirtualController::new();
 		merged.poll_loop()
 	}
 }
