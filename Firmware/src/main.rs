@@ -3,6 +3,30 @@
 
 use panic_halt as _;
 use arduino_hal::prelude::_unwrap_infallible_UnwrapInfallible;
+use arduino_hal::port::Pin;
+use arduino_hal::port::mode::Output;
+use arduino_hal::port::PinOps;
+
+// Pointless little animation.
+//
+// Mostly because I don't want the LED to blink non-stop (it's distracting), but
+// I also (for some inexplicably reason) don't want to delete the LED code
+// entirely.
+fn play_boot_animation<T>(led: &mut Pin<Output, T>) where T: PinOps {
+    // This is an "animation". Each value represents how long the LED is on for, in ms.
+    let mini_animation = [200, 200, 500];
+    let repeat_count = 3;
+
+    let delay_off = 300;
+
+    for delay in mini_animation.iter().cycle().take(mini_animation.len() * repeat_count) {
+        led.set_high();
+        arduino_hal::delay_ms(*delay);
+
+        led.set_low();
+        arduino_hal::delay_ms(delay_off);
+    }
+}
 
 #[arduino_hal::entry]
 fn main() -> ! {
@@ -11,9 +35,9 @@ fn main() -> ! {
     let mut serial = arduino_hal::default_serial!(dp, pins, 57600);
 
     let mut led = pins.d13.into_output();
+    play_boot_animation(&mut led);
 
     loop {
-        led.toggle();
         ufmt::uwriteln!(&mut serial, "Hello, World!").unwrap_infallible();
         arduino_hal::delay_ms(1000);
     }
