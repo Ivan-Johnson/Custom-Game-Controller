@@ -23,7 +23,7 @@ pub struct VirtualController {
 }
 
 impl VirtualController {
-	pub fn new() -> Self {
+	fn make_virtual_device() -> VirtualDevice {
 		// For reference, here is the config info from one of my Microsoft XBox Adaptive Joysticks.
 		//
 		// PROPERTIES: {}
@@ -63,6 +63,12 @@ impl VirtualController {
 		assert!(devnodes.len() == 1);
 		let node = devnodes.pop().unwrap().unwrap();
 		println!("node = {node:?}");
+
+		virtual_device
+	}
+
+	pub fn new() -> Self {
+		let virtual_device = Self::make_virtual_device();
 
 		Self { virtual_device }
 	}
