@@ -18,7 +18,7 @@ where
 {
 	// This is an "animation". Each value represents how long the LED is on for, in ms.
 	let mini_animation = [200, 200, 500];
-	let repeat_count = 3;
+	let repeat_count = 1;
 
 	let delay_off = 300;
 
@@ -45,7 +45,9 @@ fn main() -> ! {
 	play_boot_animation(&mut led);
 
 	loop {
-		ufmt::uwriteln!(&mut serial, "Hello, World!").unwrap_infallible();
-		arduino_hal::delay_ms(1000);
+		for character in ['U', 'u', 'R', 'r', 'D', 'd', 'L', 'l'] {
+			ufmt::uwrite!(&mut serial, "{}", character).unwrap_infallible();
+			arduino_hal::delay_ms(1000);
+		}
 	}
 }
