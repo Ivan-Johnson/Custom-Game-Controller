@@ -1,14 +1,28 @@
-* v0.1:
-
-  `LinuxDriver/src/virtual_controller.rs`: instead of outputting arbitrary data,
-  read from $RAVEDUDE_PORT. Map chars to key events. e.g. L->press left,
-  l->release left.
-
-  In firmware, instead of outputting arbitrary chars, output based on push
-  buttons. e.g. push button down -> L, push button up -> l.
+* Cleanup v0.1.x branch?
 
 * v0.2
 
   Work on getting Arduino Micro working
 
   https://github.com/Rahix/avr-hal/discussions/691
+
+* Flush out my game plan (pun intended)
+
+  * v0.1: one button -> "Rhythm Doctor"
+
+  * v0.2: two buttons -> "Unbeatable"
+
+    not really a fan... Find something better?
+
+  * v0.3: three buttons -> "Rift of the Necrodancer"
+
+  * v0.4: four buttons -> Basic "Crypt of the Necrodancer" support
+
+
+
+
+* low priority:
+
+  * button denounce?
+
+  * ???
