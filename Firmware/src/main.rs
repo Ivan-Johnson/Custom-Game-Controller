@@ -19,7 +19,7 @@ where
 	// This is an "animation". Each value represents how long the LED is on for, in ms.
 	// For simplicity, I've made it so that the total length of the animation is one second.
 	let mini_animation = [175, 175, 350];
-	let repeat_count = 10;
+	let repeat_count = 1;
 
 	let delay_off = 100;
 
@@ -45,10 +45,25 @@ fn main() -> ! {
 	let mut led = pins.d13.into_output();
 	play_boot_animation(&mut led);
 
+	let button = pins.d11.into_floating_input();
+
+	let mut was_high = button.is_high();
+
 	loop {
-		for character in ['U', 'u', 'R', 'r', 'D', 'd', 'L', 'l'] {
-			ufmt::uwrite!(&mut serial, "{}", character).unwrap_infallible();
-			arduino_hal::delay_ms(500);
-		}
+		let is_high = button.is_high();
+
+		let event = if !was_high && is_high {
+			Some('D')
+		} else if was_high && !is_high {
+			Some('d')
+		} else {
+			None
+		};
+
+		if let Some(event) = event {
+			ufmt::uwrite!(&mut serial, "{}", event).unwrap_infallible();
+		};
+
+		was_high = is_high;
 	}
 }
