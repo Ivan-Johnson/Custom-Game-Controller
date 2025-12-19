@@ -1,14 +1,10 @@
-* v0.1:
+v0.1.1:
 
-  `LinuxDriver/src/virtual_controller.rs`: instead of outputting arbitrary data,
-  read from $RAVEDUDE_PORT. Map chars to key events. e.g. L->press left,
-  l->release left.
+* Create some sort of `release_notes.md` file?
 
-  In firmware, instead of outputting arbitrary chars, output based on push
-  buttons. e.g. push button down -> L, push button up -> l.
+  The github release notes are a good starting point:
+  https://github.com/Ivan-Johnson/Custom-Game-Controller/releases/tag/v0.1.0
 
-* v0.2
+* create docs explaining how this thing works
 
-  Work on getting Arduino Micro working
-
-  https://github.com/Rahix/avr-hal/discussions/691
+* make a demo video?
