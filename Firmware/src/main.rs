@@ -17,10 +17,11 @@ where
 	T: PinOps,
 {
 	// This is an "animation". Each value represents how long the LED is on for, in ms.
-	let mini_animation = [200, 200, 500];
-	let repeat_count = 1;
+	// For simplicity, I've made it so that the total length of the animation is one second.
+	let mini_animation = [175, 175, 350];
+	let repeat_count = 10;
 
-	let delay_off = 300;
+	let delay_off = 100;
 
 	for delay in mini_animation
 		.iter()
@@ -47,7 +48,7 @@ fn main() -> ! {
 	loop {
 		for character in ['U', 'u', 'R', 'r', 'D', 'd', 'L', 'l'] {
 			ufmt::uwrite!(&mut serial, "{}", character).unwrap_infallible();
-			arduino_hal::delay_ms(1000);
+			arduino_hal::delay_ms(500);
 		}
 	}
 }
