@@ -1,5 +1,3 @@
-use std::io::ErrorKind;
-
 use crate::constants::get_input_id_virtual_controller;
 use crate::my_event_summary::summary_to_text;
 use evdev::uinput::VirtualDevice;
@@ -11,15 +9,39 @@ use evdev::InputEvent;
 use evdev::KeyCode;
 use evdev::KeyEvent;
 use evdev::UinputAbsSetup;
+use std::collections::BTreeMap;
+use std::collections::HashMap;
+use std::fs::File;
+use std::io::ErrorKind;
+use std::io::Read;
+use std::mem::Discriminant;
+use std::process::Child;
+use std::process::ChildStdout;
+use std::process::Command;
+use std::process::Stdio;
 use std::time::Duration;
 
-/// This is a HelloWorld virtual controller.
+/// A virtual controller.
 ///
-/// It takes a list of identical physical controllers as input, and uses it to
-/// create a single virtual controller. Inputs from any of the physical
-/// controllers are forwarded to the virtual controller.
+/// This controller is driven by a plain-text UART device, e.g. /dev/ttyUSB0.
+/// Each character of text that is read from that UART device is mapped to a
+/// different virtual key event. Uppercase characters correspond to buttons
+/// being pressed, lowercase letter correspond to buttons being released.
+///
+/// * L -> D-pad left
+/// * R -> D-pad right
+/// * U -> D-pad up
+/// * D -> D-pad down
 pub struct VirtualController {
 	virtual_device: VirtualDevice,
+	child: Child,
+	stdout: ChildStdout,
+}
+
+impl Drop for VirtualController {
+	fn drop(&mut self) {
+		self.child.kill().unwrap();
+	}
 }
 
 impl VirtualController {
@@ -67,27 +89,75 @@ impl VirtualController {
 		virtual_device
 	}
 
+	fn make_child() -> Result<(Child, ChildStdout), ()> {
+		let uart = env!("RAVEDUDE_PORT");
+		let mut child = Command::new("bash")
+			.arg("-c")
+			.arg(format!(
+				"python3 -m serial.tools.miniterm --quiet \"{uart}\" 57600"
+			))
+			.stdout(Stdio::piped())
+			// TODO?
+			// .stdin(Stdio::piped())
+			.stderr(Stdio::null())
+			.spawn()
+			.unwrap();
+
+		let stdout = child.stdout.take().expect("bash's stdout is None??");
+
+		Ok((child, stdout))
+	}
+
 	pub fn new() -> Self {
+		let (child, stdout) = Self::make_child().unwrap();
 		let virtual_device = Self::make_virtual_device();
 
-		Self { virtual_device }
+		Self {
+			virtual_device,
+			child,
+			stdout,
+		}
 	}
 
 	pub fn poll(&mut self) {
-		todo!();
+		let exit_status = self.child.try_wait().unwrap();
+		assert!(exit_status.is_none());
+
+		let mapping = BTreeMap::from_iter([
+			('U', KeyEvent::new(KeyCode::BTN_NORTH, 1)),
+			('u', KeyEvent::new(KeyCode::BTN_NORTH, 0)),
+			('R', KeyEvent::new(KeyCode::BTN_EAST, 1)),
+			('r', KeyEvent::new(KeyCode::BTN_EAST, 0)),
+			('D', KeyEvent::new(KeyCode::BTN_SOUTH, 1)),
+			('d', KeyEvent::new(KeyCode::BTN_SOUTH, 0)),
+			('L', KeyEvent::new(KeyCode::BTN_WEST, 1)),
+			('l', KeyEvent::new(KeyCode::BTN_WEST, 0)),
+		]);
+
+		loop {
+			let mut event: [u8; 1] = [0];
+
+			let num_events = self.stdout.read(&mut event).unwrap();
+			if num_events == 0 {
+				break;
+			}
+
+			let event = event[0];
+			let event_c = event as char;
+			let Some(keycode) = mapping.get(&event_c) else {
+				println!("ERROR: The char {event_c:?} ({event:?}) could not be mapped to  keycode");
+				continue;
+			};
+			let event: [InputEvent; 1] = [InputEvent::from(*keycode)];
+			println!("{event_c} -> {event:?}");
+			self.virtual_device.emit(&event).unwrap();
+		}
 	}
 
 	pub fn poll_loop(&mut self) -> ! {
 		loop {
-			std::thread::sleep(Duration::from_millis(1_000));
-
-			let event: [InputEvent; 1] = [InputEvent::from(KeyEvent::new(KeyCode::BTN_SOUTH, 0))];
-			self.virtual_device.emit(&event).unwrap();
-
-			std::thread::sleep(Duration::from_millis(1_000));
-
-			let event: [InputEvent; 1] = [InputEvent::from(KeyEvent::new(KeyCode::BTN_SOUTH, 1))];
-			self.virtual_device.emit(&event).unwrap();
+			std::thread::sleep(Duration::from_micros(10));
+			self.poll();
 		}
 	}
 }

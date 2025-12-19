@@ -1,6 +1,7 @@
 TODO.txt
 notes.txt
 
+LinuxDriver/src/virtual_controller.rs
 Firmware/src/main.rs
 flake.nix
 open_files.txt
