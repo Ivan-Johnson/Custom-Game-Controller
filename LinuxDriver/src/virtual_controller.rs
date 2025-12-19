@@ -1,6 +1,8 @@
 use crate::constants::get_input_id_virtual_controller;
 use crate::my_event_summary::summary_to_text;
 use evdev::uinput::VirtualDevice;
+use evdev::AbsInfo;
+use evdev::AbsoluteAxisCode;
 use evdev::AttributeSet;
 use evdev::AttributeSetRef;
 use evdev::Device;
@@ -46,35 +48,49 @@ impl Drop for VirtualController {
 
 impl VirtualController {
 	fn make_virtual_device() -> VirtualDevice {
-		// For reference, here is the config info from one of my Microsoft XBox Adaptive Joysticks.
-		//
-		// PROPERTIES: {}
-		// KEYS: {BTN_SOUTH, BTN_EAST, BTN_NORTH, BTN_WEST, BTN_TL, BTN_TR, BTN_SELECT, BTN_START, BTN_MODE, BTN_THUMBL, BTN_THUMBR}
-		// ABSINFO: ABS_X, AbsInfo(input_absinfo { value: -64, minimum: -32768, maximum: 32767, fuzz: 16, flat: 128, resolution: 0 })
-		// ABSINFO: ABS_Y, AbsInfo(input_absinfo { value: 1317, minimum: -32768, maximum: 32767, fuzz: 16, flat: 128, resolution: 0 })
-		// ABSINFO: ABS_Z, AbsInfo(input_absinfo { value: 0, minimum: 0, maximum: 1023, fuzz: 0, flat: 0, resolution: 0 })
-		// ABSINFO: ABS_RX, AbsInfo(input_absinfo { value: 0, minimum: -32768, maximum: 32767, fuzz: 16, flat: 128, resolution: 0 })
-		// ABSINFO: ABS_RY, AbsInfo(input_absinfo { value: 0, minimum: -32768, maximum: 32767, fuzz: 16, flat: 128, resolution: 0 })
-		// ABSINFO: ABS_RZ, AbsInfo(input_absinfo { value: 0, minimum: 0, maximum: 1023, fuzz: 0, flat: 0, resolution: 0 })
-		// ABSINFO: ABS_HAT0X, AbsInfo(input_absinfo { value: 0, minimum: -1, maximum: 1, fuzz: 0, flat: 0, resolution: 0 })
-		// ABSINFO: ABS_HAT0Y, AbsInfo(input_absinfo { value: 0, minimum: -1, maximum: 1, fuzz: 0, flat: 0, resolution: 0 })
-
+		// These keycodes and axies were yanked from one of my Microsoft
+		// XBox Adaptive Joysticks.
 		let keys = [
 			KeyCode::BTN_SOUTH,
 			KeyCode::BTN_EAST,
 			KeyCode::BTN_NORTH,
 			KeyCode::BTN_WEST,
+			KeyCode::BTN_TL,
+			KeyCode::BTN_TR,
+			KeyCode::BTN_SELECT,
+			KeyCode::BTN_START,
+			KeyCode::BTN_MODE,
+			KeyCode::BTN_THUMBL,
+			KeyCode::BTN_THUMBR,
 		];
 		let keys = AttributeSet::from_iter(keys);
 
-		let mut virtual_device = VirtualDevice::builder()
+		#[rustfmt::skip]
+
+		let mut builder = VirtualDevice::builder()
 			.unwrap()
 			.name("Hello World")
 			.input_id(get_input_id_virtual_controller())
 			.with_keys(&keys)
-			.unwrap()
-			.build()
 			.unwrap();
+
+		#[rustfmt::skip]
+		let axies = [
+			//                  axis                                      value,    min,   max, fuzz, flat, resolution
+			UinputAbsSetup::new(AbsoluteAxisCode::ABS_X,     AbsInfo::new(  -64, -32768, 32767,   16,  128,          0)),
+			UinputAbsSetup::new(AbsoluteAxisCode::ABS_Y,     AbsInfo::new( 1317, -32768, 32767,   16,  128,          0)),
+			UinputAbsSetup::new(AbsoluteAxisCode::ABS_Z,     AbsInfo::new(    0,      0,  1023,    0,    0,          0)),
+			UinputAbsSetup::new(AbsoluteAxisCode::ABS_RX,    AbsInfo::new(    0, -32768, 32767,   16,  128,          0)),
+			UinputAbsSetup::new(AbsoluteAxisCode::ABS_RY,    AbsInfo::new(    0, -32768, 32767,   16,  128,          0)),
+			UinputAbsSetup::new(AbsoluteAxisCode::ABS_RZ,    AbsInfo::new(    0,      0,  1023,    0,    0,          0)),
+			UinputAbsSetup::new(AbsoluteAxisCode::ABS_HAT0X, AbsInfo::new(    0,     -1,     1,    0,    0,          0)),
+			UinputAbsSetup::new(AbsoluteAxisCode::ABS_HAT0Y, AbsInfo::new(    0,     -1,     1,    0,    0,          0)),
+		];
+		for axis in axies {
+			builder = builder.with_absolute_axis(&axis).unwrap();
+		}
+
+		let mut virtual_device = builder.build().unwrap();
 
 		println!("Virtual device = {virtual_device:?}");
 		let syspath = virtual_device.get_syspath().unwrap();
