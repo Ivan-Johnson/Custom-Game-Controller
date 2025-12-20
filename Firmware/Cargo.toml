@@ -5,22 +5,14 @@ authors = ["Ivan Johnson <git@IvanJohnson.net>"]
 edition = "2021"
 publish = false
 
-[[bin]]
-name = "itj_videogame_controller_firmware"
-test = false
-bench = false
-
 [dependencies]
 panic-halt = "1.0.0"
-ufmt = "0.2.0"
-# nb = "1.1.0"
-# embedded-hal = "1.0"
 
 [dependencies.arduino-hal]
 path = "../avr-hal/arduino-hal"
-features = ["arduino-nano"]
+features = ["arduino-micro"]
 
-# Configure the build for minimal size - AVRs have very little program memory
+
 [profile.dev]
 panic = "abort"
 lto = true

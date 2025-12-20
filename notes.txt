@@ -1,11 +1,16 @@
+* https://github.com/Rahix/avr-hal/discussions/691
+
+* https://github.com/Rahix/avr-hal/blob/main/ravedude/src/boards.toml
+
+* https://github.com/Rahix/avr-hal/tree/main/examples
+
 * Hardware:
 
-  https://store.arduino.cc/collections/nano-family/products/arduino-nano
+  https://store.arduino.cc/products/arduino-micro
 
-  * Microcontroller: ATmega328
-  * Architecture: AVR
-  * Flash Memory: 32 KB of which 2 KB used by bootloader
-  * SRAM: 2K
+  * Microcontroller: ATmega32U4
+  * Flash Memory: 32 KB of which 4KB used by bootloader
+  * SRAM: 2.5K
 
 * Rust embedded book:
   https://docs.rust-embedded.org/book
