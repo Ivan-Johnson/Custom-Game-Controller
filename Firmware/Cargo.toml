@@ -3,6 +3,7 @@ name = "itj_videogame_controller_firmware"
 version = "0.1.0"
 authors = ["Ivan Johnson <git@IvanJohnson.net>"]
 edition = "2021"
+publish = false
 
 [[bin]]
 name = "itj_videogame_controller_firmware"
