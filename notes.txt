@@ -1,8 +1,13 @@
-* https://github.com/Rahix/avr-hal/discussions/691
+* https://github.com/rust-embedded-community/usb-device
 
-* https://github.com/Rahix/avr-hal/blob/main/ravedude/src/boards.toml
+  This package is used to implement a USB class (e.g. HID, serial port)
 
-* https://github.com/Rahix/avr-hal/tree/main/examples
+  Has links to a bunch of hardware drivers:
+  https://github.com/rust-embedded-community/usb-device?tab=readme-ov-file#hardware-driver-crates
+
+  looks like I will need to implement the UsbBus trait?
+  https://docs.rs/usb-device/latest/usb_device/bus/trait.UsbBus.html
+
 
 * Hardware:
 
