@@ -1,3 +1,9 @@
+* Follow-up with Rahix, eventually:
+
+  * https://github.com/Rahix/avr-hal/issues/40#issuecomment-3684556187
+
+  * https://github.com/Rahix/avr-hal-template/pull/40
+
 * Cleanup v0.1.x branch?
 
 * v0.2
