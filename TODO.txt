@@ -4,6 +4,10 @@
 
   * https://github.com/Rahix/avr-hal-template/pull/40
 
+* https://github.com/Rahix/avr-hal/issues/353
+
+  good issue to work on to gain familiarity w/ `avr-hal` code?
+
 * Cleanup v0.1.x branch?
 
 * v0.2
