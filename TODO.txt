@@ -10,12 +10,6 @@
 
 * Cleanup v0.1.x branch?
 
-* v0.2
-
-  Work on getting Arduino Micro working
-
-  https://github.com/Rahix/avr-hal/discussions/691
-
 * Flush out my game plan (pun intended)
 
   * v0.1: one button -> "Rhythm Doctor"
