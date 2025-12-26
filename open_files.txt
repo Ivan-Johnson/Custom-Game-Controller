@@ -1,6 +1,10 @@
 TODO.txt
 notes.txt
 
+# https://github.com/Rahix/avr-hal/issues/353
+avr-hal/avr-hal-generic/src/usart.rs
+
+
 Firmware/src/main.rs
 flake.nix
 open_files.txt
