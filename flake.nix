@@ -54,7 +54,7 @@
 			};
 
 			# temporarily changed to GNU's Hello World package
-			packages.${pkgs.system}.default = pkgs.hello;
+			packages.x86_64-linux.default = pkgs.hello;
 
 			nixos_options =
 				{
