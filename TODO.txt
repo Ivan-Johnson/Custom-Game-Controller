@@ -2,45 +2,6 @@
 
   * https://github.com/Rahix/avr-hal/issues/40#issuecomment-3684556187
 
-* USB:
-
-  * PR review: https://github.com/Rahix/avr-hal/pull/572
-
-    git d d1782c6 0be252f2a
-
-    TL;DR:
-
-    * creates public `arduino-hal::AvrUsbBus`
-
-      ???
-
-    * creates public `arduino-hal::default_sb_bus`
-
-    * see `leonardo-usb.rs` for example usage
-
-    Sus:
-
-    * New dependency on `usb-device`
-
-      Seems to be the de facto standard
-
-      https://github.com/rust-embedded-community/usb-device
-
-    * Uses `decl_macro`, an experimental rust feature that is not already being
-      used used avr-hal
-
-    *
-
-* USART: parity & stop bits
-
-  https://github.com/Rahix/avr-hal/issues/353
-
-  good issue to work on to gain familiarity w/ `avr-hal` code?
-
-  file:///home/i/Workspaces/2/Custom-Game-Controller/Archive/arduino_nano_mcu.pdf
-
-  * ch 20: USARG
-
 * Cleanup v0.1.x branch?
 
 * Flush out my game plan (pun intended)

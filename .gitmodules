@@ -1,6 +1,0 @@
-[submodule "avr-hal"]
-	path = avr-hal
-	url = git@github.com:Rahix/avr-hal.git
-[submodule ".git_submodules/TinyDeps"]
-	path = .git_submodules/TinyDeps
-	url = git@github.com:Ivan-Johnson/TinyDeps.git
