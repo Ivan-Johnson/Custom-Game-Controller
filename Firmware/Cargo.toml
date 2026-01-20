@@ -9,8 +9,12 @@ publish = false
 panic-halt = "1.0.0"
 
 [dependencies.arduino-hal]
-git = "https://github.com/rahix/avr-hal"
-rev = "ff4909c00ceee76d60f8bd7cc95bc0f3e2ab673f"
+# I'm working on adding USB support to avr-hal:
+# https://github.com/Rahix/avr-hal/pull/694
+#
+# This is my dev branch:
+git = "https://github.com/Ivan-Johnson/avr-hal"
+branch = "usb"
 features = ["arduino-micro"]
 
 
