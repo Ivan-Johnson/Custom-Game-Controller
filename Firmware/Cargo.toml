@@ -7,6 +7,11 @@ publish = false
 
 [dependencies]
 panic-halt = "1.0.0"
+usb-device = "0.3.2"
+usbd-serial = "0.2.2"
+
+# TODO: remove, eventually?
+ufmt = "0.2.0"
 
 [dependencies.arduino-hal]
 # I'm working on adding USB support to avr-hal:
