@@ -1,5 +1,5 @@
 {
-	description = "driver";
+	description = "Packages for my custom game controller";
 
 	inputs = {
 		nixpkgs.url = "nixpkgs/nixos-25.11-small";
@@ -16,26 +16,14 @@
 			fenix,
 		}:
 		let
-			pkgs = import nixpkgs { system = "x86_64-linux"; };
-			rustPlatform = pkgs.rustPlatform;
-			driver = rustPlatform.buildRustPackage {
-				pname = "driver";
-
-				version = "0.1.0";
-
-				src = ./.;
-
-				buildInputs = [ pkgs.makeWrapper ];
-
-				checkFlags = [
-					#"--skip=foo::bar::..."
-				];
-
-				cargoLock.lockFile = ./Cargo.lock;
+			pkgs = import nixpkgs {
+				system = "x86_64-linux";
+				config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "vscode" ];
 			};
+			rustPlatform = pkgs.rustPlatform;
 		in
-		{
-			devShells.x86_64-linux.default = pkgs.mkShell {
+		let
+			shell = pkgs.mkShell {
 				buildInputs = [
 					pkgs.arduino-cli
 					pkgs.arduino-ide
@@ -45,6 +33,7 @@
 					(pkgs.python3.withPackages (python-pkgs: with python-pkgs; [ pyserial ]))
 					pkgs.minicom
 					pkgs.ravedude
+					pkgs.vscode
 					(fenix.packages.x86_64-linux.fromToolchainFile {
 						file = ./rust-toolchain.toml;
 						# sha256 = "sha256-z8J/GH7znPPg9kKvPirKcBeXqHikj1M7KB+anwsDx0M=";
@@ -53,29 +42,20 @@
 				];
 				RAVEDUDE_PORT = "/dev/ttyACM0";
 			};
+		in
+		{
+			devShells.x86_64-linux.default = shell;
 
-			# temporarily changed to GNU's Hello World package
-			packages.x86_64-linux.default = pkgs.hello;
-
-			nixos_options =
-				{
-					config,
-					lib,
-					pkgs,
-					...
-				}:
-
-				let
-					cfg = config.programs.driver;
-				in
-				{
-					options = {
-						programs.driver = {
-							enable = lib.mkEnableOption "driver";
-						};
-					};
-
-					config = lib.mkMerge [ (lib.mkIf cfg.enable { home.packages = [ driver ]; }) ];
-				};
+			# This is kinda a hack. I'm not even sure if it works.
+			#
+			# Setting `shell` as the default target means that `nix
+			# build` will build the shell environment and create
+			# `result` (a sym link to the activation script).
+			#
+			# As I understand it, as long as that symlink exists
+			# the garbage collector will never delete the shell
+			# environment from the nix store. In particular, this
+			# means that `nix develop` will always be fast.
+			packages.x86_64-linux.default = shell;
 		};
 }
