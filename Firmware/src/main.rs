@@ -3,8 +3,9 @@
 /// In this version, you need to have two push buttons; one on A5, one on D13.
 /// They should pull the pins to ground when they are pushed.
 ///
-/// When D13 is pressed, The keycode for the 'b' button is emitted. When A5 is
-/// pressed, the keycode for 'a' is emitted.
+/// When D13 is pressed, The keycode for the 'F2' keycode is emitted. When A5 is
+/// pressed, the keycode for 'F1' is emitted. These keycodes were choosen to
+/// reduce the risk of conflicts in typical videogame keybindings.
 
 use arduino_hal::delay_ms;
 use arduino_hal::prelude::*;
@@ -86,10 +87,10 @@ fn main() -> ! {
 			// https://gist.github.com/mildsunrise/4e231346e2078f440969cdefb6d4caa3
 			//
 			// TODO: Create an enum upstream?
-			keycodes[0] = 0x04; // 'a'
+			keycodes[0] = 0x3A; // F1
 		}
 		if state2 {
-			keycodes[1] = 0x05; // 'b'
+			keycodes[1] = 0x3B; // F2
 		}
 		ufmt::uwriteln!(&mut serial_hw, "{}, {}", state1, state2).unwrap_infallible();
 
