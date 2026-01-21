@@ -457,6 +457,7 @@ name = "itj_videogame_controller_firmware"
 version = "0.1.0"
 dependencies = [
  "arduino-hal",
+ "embedded-hal 1.0.0",
  "panic-halt",
  "ufmt",
  "usb-device",

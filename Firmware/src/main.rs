@@ -1,8 +1,15 @@
 #![no_std]
 #![no_main]
+/// In this version, you need to have two push buttons; one on A5, one on D13.
+/// They should pull the pins to ground when they are pushed.
+///
+/// When D13 is pressed, The keycode for the 'b' button is emitted. When A5 is
+/// pressed, the keycode for 'a' is emitted.
+
 use arduino_hal::delay_ms;
 use arduino_hal::prelude::*;
 use arduino_hal::Peripherals;
+use itj_videogame_controller_firmware::my_pin::MyPin;
 use panic_halt as _;
 use usb_device::bus::UsbBusAllocator;
 use usb_device::device::StringDescriptors;
@@ -28,8 +35,8 @@ use usbd_hid::descriptor::SerializedDescriptor;
 fn main() -> ! {
 	let dp: Peripherals = Peripherals::take().unwrap();
 	let pins = arduino_hal::pins!(dp);
-	let pin1 = pins.d13.into_pull_up_input();
-	let pin2 = pins.a5.into_pull_up_input();
+	let mut pin1 = MyPin::new(pins.a5.into_pull_up_input());
+	let mut pin2 = MyPin::new(pins.d13.into_pull_up_input());
 	let mut serial_hw = arduino_hal::default_serial!(dp, pins, 57600);
 	ufmt::uwriteln!(&mut serial_hw, "Hello from Arduino!").unwrap_infallible();
 
@@ -56,41 +63,43 @@ fn main() -> ! {
 	// TODO: only in dev builds
 	usb_dev.force_reset().unwrap();
 
+	// Even if things go horribly wrong and the device starts spamming
+	// keyboard events, it should still be trivial to flash it: just press
+	// the reset button.
+	//
+	// I might be overlooking some edge case where it's hard to flash the
+	// device. This delay will, hopefully, help with that.
 	delay_ms(500);
 
-	let mut counter = 0;
-	let mut button_is_pressed = false;
-
-	// This will hold down the "A" button for a second or two, release it for a second or two, and then repeat infinitely.
 	loop {
-		counter += 1;
-		let state1 = pin1.is_low();
-		let state2 = pin2.is_low();
-		ufmt::uwriteln!(&mut serial_hw, "Cycle {} - {}, {}", counter, state1, state2).unwrap_infallible();
-
 		usb_dev.poll(&mut [&mut hid_class]);
 
-		if counter % 1000 == 0 {
-			counter = 0;
-			button_is_pressed = !button_is_pressed;
-
-			let mut keycodes = [0u8; 6];
-			if button_is_pressed {
-				// Keycode obtained from:
-				// https://gist.github.com/mildsunrise/4e231346e2078f440969cdefb6d4caa3
-				//
-				// TODO: Create an enum upstream?
-				keycodes[0] = 0x04; // 'a'
-			}
-
-			hid_class
-				.push_input(&KeyboardReport {
-					keycodes,
-					leds: 0,
-					modifier: 0,
-					reserved: 0,
-				})
-				.unwrap();
+		if !pin1.has_data() && !pin2.has_data() {
+			continue;
 		}
+
+		let state1 = !pin1.is_high();
+		let state2 = !pin2.is_high();
+		let mut keycodes = [0u8; 6];
+		if state1 {
+			// Keycode obtained from:
+			// https://gist.github.com/mildsunrise/4e231346e2078f440969cdefb6d4caa3
+			//
+			// TODO: Create an enum upstream?
+			keycodes[0] = 0x04; // 'a'
+		}
+		if state2 {
+			keycodes[1] = 0x05; // 'b'
+		}
+		ufmt::uwriteln!(&mut serial_hw, "{}, {}", state1, state2).unwrap_infallible();
+
+		hid_class
+			.push_input(&KeyboardReport {
+				keycodes,
+				leds: 0,
+				modifier: 0,
+				reserved: 0,
+			})
+			.unwrap();
 	}
 }
