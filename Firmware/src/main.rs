@@ -28,6 +28,8 @@ use usbd_hid::descriptor::SerializedDescriptor;
 fn main() -> ! {
 	let dp: Peripherals = Peripherals::take().unwrap();
 	let pins = arduino_hal::pins!(dp);
+	let pin1 = pins.d13.into_pull_up_input();
+	let pin2 = pins.a5.into_pull_up_input();
 	let mut serial_hw = arduino_hal::default_serial!(dp, pins, 57600);
 	ufmt::uwriteln!(&mut serial_hw, "Hello from Arduino!").unwrap_infallible();
 
@@ -62,7 +64,9 @@ fn main() -> ! {
 	// This will hold down the "A" button for a second or two, release it for a second or two, and then repeat infinitely.
 	loop {
 		counter += 1;
-		ufmt::uwriteln!(&mut serial_hw, "Cycle {}", counter).unwrap_infallible();
+		let state1 = pin1.is_low();
+		let state2 = pin2.is_low();
+		ufmt::uwriteln!(&mut serial_hw, "Cycle {} - {}, {}", counter, state1, state2).unwrap_infallible();
 
 		usb_dev.poll(&mut [&mut hid_class]);
 
