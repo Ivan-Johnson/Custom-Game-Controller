@@ -1,5 +1,6 @@
 #![no_std]
 #![no_main]
+use arduino_hal::delay_ms;
 use arduino_hal::prelude::*;
 use arduino_hal::Peripherals;
 use panic_halt as _;
@@ -8,7 +9,10 @@ use usb_device::device::StringDescriptors;
 use usb_device::device::UsbDeviceBuilder;
 use usb_device::device::UsbVidPid;
 use usb_device::LangID;
-use usbd_serial::SerialPort;
+use usbd_hid::descriptor::KeyboardReport;
+use usbd_hid::descriptor::MouseReport;
+use usbd_hid::descriptor::SerializedDescriptor;
+use usbd_hid::hid_class::HIDClass;
 
 #[arduino_hal::entry]
 fn main() -> ! {
@@ -20,7 +24,7 @@ fn main() -> ! {
 	let usb_bus = arduino_hal::default_usb_bus_with_pll_macro!(dp);
 	let usb_bus_allocator = UsbBusAllocator::new(usb_bus);
 
-	let mut serial_usb = SerialPort::new(&usb_bus_allocator);
+	let mut hid_class = HIDClass::new(&usb_bus_allocator, KeyboardReport::desc(), 1);
 
 	let string_descriptors = StringDescriptors::new(LangID::EN_US)
 		.manufacturer("test manufacturer")
@@ -34,42 +38,31 @@ fn main() -> ! {
 		.unwrap()
 		.max_packet_size_0(64)
 		.unwrap()
-		.device_class(usbd_serial::USB_CLASS_CDC)
 		.build();
 
 	// TODO: only in dev builds
 	usb_dev.force_reset().unwrap();
 
+	delay_ms(500);
+
+	let mut counter = 0;
 	loop {
-		// Wait until we have data
-		if !usb_dev.poll(&mut [&mut serial_usb]) {
-			continue;
+		counter += 1;
+		ufmt::uwriteln!(&mut serial_hw, "Cycle {}", counter).unwrap_infallible();
+
+		usb_dev.poll(&mut [&mut hid_class]);
+
+		if counter % 1000 == 0 {
+			counter = 0;
+			hid_class
+				.push_input(&MouseReport {
+					x: 0,
+					y: 4,
+					buttons: 0,
+					pan: 0,
+					wheel: 0,
+				})
+				.unwrap();
 		}
-
-		// Read the data into this buffer
-		let mut read_buf = [0u8; 10];
-		let Ok(read_count) = serial_usb.read(&mut read_buf) else {
-			continue;
-		};
-		if read_count == 0 {
-			continue;
-		}
-
-		// Ideally we want to do something like this:
-		//
-		// ```
-		// let mut write_buf = [0u8; 20];
-		// let write_count = ufmt::uwriteln!(&mut write_buf, "Got: {}", &write_buf);
-		// ```
-		//
-		// TODO: Figure out how to get the above code to compile. It seems like
-		// I might need to manually implement the uDebug trait? That doesn't seem
-		// right... In the meantime, simply echo the string back
-
-		// TODO: is this `.expect()` safe?
-		let len = serial_usb.write(&read_buf[0..read_count]).expect(
-			"The host should be reading data faster than the arduino can write it",
-		);
-		assert_eq!(len, read_count);
 	}
 }

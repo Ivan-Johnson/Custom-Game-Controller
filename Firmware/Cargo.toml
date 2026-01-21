@@ -8,7 +8,7 @@ publish = false
 [dependencies]
 panic-halt = "1.0.0"
 usb-device = "0.3.2"
-usbd-serial = "0.2.2"
+usbd-hid = "0.9"
 
 # TODO: remove, eventually?
 ufmt = "0.2.0"
