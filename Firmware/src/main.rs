@@ -9,7 +9,6 @@ use usb_device::device::StringDescriptors;
 use usb_device::device::UsbDeviceBuilder;
 use usb_device::device::UsbVidPid;
 use usb_device::LangID;
-use usbd_hid::descriptor::KeyboardReport;
 use usbd_hid::descriptor::MouseReport;
 use usbd_hid::descriptor::SerializedDescriptor;
 use usbd_hid::hid_class::HIDClass;
@@ -24,7 +23,7 @@ fn main() -> ! {
 	let usb_bus = arduino_hal::default_usb_bus_with_pll_macro!(dp);
 	let usb_bus_allocator = UsbBusAllocator::new(usb_bus);
 
-	let mut hid_class = HIDClass::new(&usb_bus_allocator, KeyboardReport::desc(), 1);
+	let mut hid_class = HIDClass::new(&usb_bus_allocator, MouseReport::desc(), 1);
 
 	let string_descriptors = StringDescriptors::new(LangID::EN_US)
 		.manufacturer("test manufacturer")
@@ -57,7 +56,7 @@ fn main() -> ! {
 			hid_class
 				.push_input(&MouseReport {
 					x: 0,
-					y: 4,
+					y: 40,
 					buttons: 0,
 					pan: 0,
 					wheel: 0,
