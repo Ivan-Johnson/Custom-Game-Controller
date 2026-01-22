@@ -1,7 +1,6 @@
 [package]
 name = "itj_videogame_controller_firmware"
-# I only use version numbers on tagged releases, *not* branches.
-# version = "0.2.x"
+version = "0.2.0"
 authors = ["Ivan Johnson <git@IvanJohnson.net>"]
 edition = "2021"
 publish = false
