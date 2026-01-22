@@ -1,0 +1,25 @@
+# It might seem unnecessary to have a workspace with only one member, but:
+# * This allows me to run `cargo` commands from the root of the git repo
+# * My pre-push git hook expects Rust repos to have a Cargo.toml in the root
+#   Creating one is easier than updating the hook.
+# * Why not? I'm probably going to add more members eventually.
+[workspace]
+members = [
+    "Firmware",
+]
+resolver = "2"
+
+[workspace.package]
+publish = false
+
+[profile.dev]
+panic = "abort"
+lto = true
+opt-level = "s"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+debug = true
+lto = true
+opt-level = "s"

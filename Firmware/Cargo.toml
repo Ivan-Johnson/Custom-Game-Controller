@@ -23,16 +23,3 @@ ufmt = "0.2.0"
 git = "https://github.com/Ivan-Johnson/avr-hal"
 branch = "usb"
 features = ["arduino-micro"]
-
-
-[profile.dev]
-panic = "abort"
-lto = true
-opt-level = "s"
-
-[profile.release]
-panic = "abort"
-codegen-units = 1
-debug = true
-lto = true
-opt-level = "s"

@@ -32,7 +32,7 @@ checksum = "a23eb6b1614318a8071c9b2521f36b424b2c83db5eb3a0fead4a6c0809af6e61"
 [[package]]
 name = "arduino-hal"
 version = "0.1.0"
-source = "git+https://github.com/Ivan-Johnson/avr-hal?branch=usb#4a75ba0b2704000b231e4972594fb1345d4968a8"
+source = "git+https://github.com/Ivan-Johnson/avr-hal?branch=usb#e7fe93df5036f02f2535f004334f315b317ecbd0"
 dependencies = [
  "atmega-hal",
  "avr-device",
@@ -64,7 +64,7 @@ dependencies = [
 [[package]]
 name = "atmega-hal"
 version = "0.1.0"
-source = "git+https://github.com/Ivan-Johnson/avr-hal?branch=usb#4a75ba0b2704000b231e4972594fb1345d4968a8"
+source = "git+https://github.com/Ivan-Johnson/avr-hal?branch=usb#e7fe93df5036f02f2535f004334f315b317ecbd0"
 dependencies = [
  "avr-device",
  "avr-hal-generic",
@@ -107,7 +107,7 @@ dependencies = [
 [[package]]
 name = "avr-hal-generic"
 version = "0.1.0"
-source = "git+https://github.com/Ivan-Johnson/avr-hal?branch=usb#4a75ba0b2704000b231e4972594fb1345d4968a8"
+source = "git+https://github.com/Ivan-Johnson/avr-hal?branch=usb#e7fe93df5036f02f2535f004334f315b317ecbd0"
 dependencies = [
  "avr-device",
  "embedded-hal 0.2.7",
@@ -599,9 +599,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.105"
+version = "1.0.106"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "535d180e0ecab6268a3e718bb9fd44db66bbbc256257165fc699dadf70d16fe7"
+checksum = "8fd00f0bb2e90d81d1044c2b32617f68fcb9fa3bb7640c23e9c748e53fb30934"
 dependencies = [
  "unicode-ident",
 ]
