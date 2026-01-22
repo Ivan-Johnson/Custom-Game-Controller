@@ -1,21 +1,35 @@
-* Follow-up with Rahix, eventually:
+[X] v0.1: one button -> "Rhythm Doctor"
 
-  * https://github.com/Rahix/avr-hal/issues/40#issuecomment-3684556187
+    UART based
 
-* Cleanup v0.1.x branch?
+[X] v0.2: two buttons -> "Unbeatable" (not really a fan... Find something better?)
 
-* Flush out my game plan (pun intended)
+    USB keyboard
 
-  * v0.1: one button -> "Rhythm Doctor"
+[ ] v0.3: three buttons -> "Rift of the Necrodancer"
 
-  * v0.2: two buttons -> "Unbeatable"
+    [ ] add third button
 
-    not really a fan... Find something better?
+    [ ] USB game controller
 
-  * v0.3: three buttons -> "Rift of the Necrodancer"
+        https://github.com/twitchyliquid64/usbd-hid/blob/master/src/descriptor.rs#L61-L86
 
-  * v0.4: four buttons -> Basic "Crypt of the Necrodancer" support
+    [ ] continue iterating on avr-hal CR.
 
+    [ ] fix pre-push hook
+
+    [ ] ???
+
+[ ] v0.4: four buttons -> Basic "Crypt of the Necrodancer" support
+
+    [ ] Hopefully I've merged my avr-hal PR by this point...
+
+        After merging avr-hal PR(s), maybe start working on a PR to add an xbox
+        descriptor to `usbd-hid`?
+
+    [ ] Maybe start working on the actual hardware?
+
+    [ ] ???
 
 
 
