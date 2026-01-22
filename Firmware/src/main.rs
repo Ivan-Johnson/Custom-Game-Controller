@@ -6,7 +6,6 @@
 /// When D13 is pressed, The keycode for the 'F2' keycode is emitted. When A5 is
 /// pressed, the keycode for 'F1' is emitted. These keycodes were choosen to
 /// reduce the risk of conflicts in typical videogame keybindings.
-
 use arduino_hal::delay_ms;
 use arduino_hal::prelude::*;
 use arduino_hal::Peripherals;
@@ -18,8 +17,8 @@ use usb_device::device::UsbDeviceBuilder;
 use usb_device::device::UsbVidPid;
 use usb_device::LangID;
 use usbd_hid::descriptor::KeyboardReport;
-use usbd_hid::hid_class::HIDClass;
 use usbd_hid::descriptor::SerializedDescriptor;
+use usbd_hid::hid_class::HIDClass;
 
 // TODO short term: I should be using a custom descriptor instead of
 // a keyboard report. Examples:
