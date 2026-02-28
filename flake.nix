@@ -18,7 +18,7 @@
 		let
 			pkgs = import nixpkgs {
 				system = "x86_64-linux";
-				config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "vscode" ];
+				config.allowUnfreePredicate = pkg: builtins.elem (nixpkgs.lib.getName pkg) [ "vscode" "saleae-logic-2" ];
 			};
 			rustPlatform = pkgs.rustPlatform;
 		in
@@ -34,6 +34,7 @@
 					pkgs.minicom
 					pkgs.ravedude
 					pkgs.vscode
+					pkgs.saleae-logic-2
 					(fenix.packages.x86_64-linux.fromToolchainFile {
 						file = ./rust-toolchain.toml;
 						# sha256 = "sha256-z8J/GH7znPPg9kKvPirKcBeXqHikj1M7KB+anwsDx0M=";

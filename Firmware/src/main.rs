@@ -86,10 +86,10 @@ fn main() -> ! {
 			// https://gist.github.com/mildsunrise/4e231346e2078f440969cdefb6d4caa3
 			//
 			// TODO: Create an enum upstream?
-			keycodes[0] = 0x3A; // F1
+			keycodes[0] = 0x04; // a
 		}
 		if state2 {
-			keycodes[1] = 0x3B; // F2
+			keycodes[1] = 0x05; // b
 		}
 		ufmt::uwriteln!(&mut serial_hw, "{}, {}", state1, state2).unwrap_infallible();
 
